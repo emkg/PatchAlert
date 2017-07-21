@@ -1,0 +1,5 @@
+<<<<<<< HEAD
+{"virtualbox":{"/vagrant":{"guestpath":"/vagrant","hostpath":"/Users/emily.grimes/Desktop/patch-email","disabled":false,"__vagrantfile":true}}}
+=======
+{"virtualbox":{"/vagrant":{"guestpath":"/vagrant","hostpath":"/Users/SamCarter/GitHub/PatchEmail","disabled":false,"__vagrantfile":true}}}
+>>>>>>> 677cc6b6007f827087246a69c817cc271f41b0b8
