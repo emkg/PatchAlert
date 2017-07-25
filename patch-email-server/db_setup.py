@@ -18,13 +18,12 @@ class Alert(Base):
 
     servers = Column(String(500), nullable=False)
     date = Column(String(10), nullable=False)
-    startTime = Column(String(7), nullable=False)
-    endTime = Column(String(7), nullable=False)
+    startTime = Column(String(8), nullable=False)
+    endTime = Column(String(8), nullable=False)
     createdBy = relationship(User)
     approvedBy = relationship(User)
     isApproved = Column(Integer) # 0 or 1
     isExpired = Column(Integer) # 0 or 1
-    approvedBy_id = Column(Integer, ForeignKey('user.id'))
     createdBy_id = Column(Integer, ForeignKey('user.id'))
     id = Column(Integer, primary_key = True)
 
@@ -41,7 +40,6 @@ class Alert(Base):
             'isApproved': self.isApproved,
             'id': self.id,
             'createdBy_id': self.createdBy_id,
-            'approvedBy_id': self.approvedBy_id,
         }
 
 class Request(Base):
@@ -50,10 +48,9 @@ class Request(Base):
     server = Column(String(80), nullable = False)
     id = Column(Integer, primary_key = True)
     reason = Column(String(250), nullable = False)
-    altDate = Column(String(7), nullable=False)
-    altTime = Column(String(7), nullable=False)
-    user_id = Column(Integer, ForeignKey('user.id'))
-    user = relationship(User)
+    altDate = Column(String(10), nullable=False)
+    altTime = Column(String(8), nullable=False)
+    user = Column(String(80), nullable=False)
     alert = relationship(Alert)
     alert_id = Column(Integer, ForeignKey('alert.id'))
 
@@ -66,8 +63,6 @@ class Request(Base):
             'altDate': self.altDate,
             'altTime': self.altTime,
             'user': self.user,
-            'user_id': self.user_id,
-            'alert': self.alert,
             'alert_id': self.alert_id,
             'id': self.id,
         }

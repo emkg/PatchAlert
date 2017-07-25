@@ -1,0 +1,29 @@
+<html>
+  <head>
+    <link rel='stylesheet' type='text/css' href='/static/css/style.css'/>
+  </head>
+  <body>
+
+    {% for alert in alerts %}
+      <div class='page-container'>
+        <div class='item-box' >
+          <div class='item'>
+            Patch for {{alert.servers}} on {{alert.date}}
+            from {{alert.startTime}} to {{alert.endTime}}
+          </div>
+          <div class='buttons' >
+            <a href='{{url_for('getStats', alert_id=alert.id)}}' >STATS</a>
+            <br/>
+            <a href='{{url_for('requestException', alert_id=alert.id)}}' >REQUEST EXCEPTION</a>
+            <br/>
+            <br/>
+          </div>          
+        </div>
+      </div>
+    {% endfor %}
+
+
+    <a href='{{url_for('loginToCreateAlert')}}'> New Alert </a>
+
+  </body>
+</html>

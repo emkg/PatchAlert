@@ -1,0 +1,13 @@
+<html>
+  <body>
+    <form method='POST' action='{{url_for('requestException', alert_id=alert_id)}}'>
+      <h2>Request an Exception to the Patch.</h2>
+      <input type='text' name='user' placeholder="your name"/>
+      <input type='text' name='server' placeholder="server"/>
+      <input type='text' name='reason' placeholder="reason"/>
+      <input type='text' name='altDate' placeholder="alt date"/>
+      <input type='text' name='altTime' placeholder="alt time"/>
+      <input type='submit' value="submit"/>
+    </form>
+  </body>
+</html>

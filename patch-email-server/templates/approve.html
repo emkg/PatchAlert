@@ -1,0 +1,23 @@
+<html>
+  <body>
+
+    <div>
+      Patch for {{alert.servers}} on {{alert.date}}
+      from {{alert.startTime}} to {{alert.endTime}}
+
+      created by: {{alert.createdBy}}
+
+      <span id="italic">(pending approval)</span>
+    </div>
+
+
+    <!-- change RHS of alert_id to alert.id -->
+    <form method='POST' action='{{url_for('approveAlert', alert_id=alert_id, user_id=user_id)}}'>
+      <h2>Do you approve?</h2>
+      <input type="radio" name="approve" value="1"> Yes
+      <input type="radio" name="approve" value="0"/> No
+      <br/>
+      <input type='submit' value="submit"/>
+    </form>
+  </body>
+</html>

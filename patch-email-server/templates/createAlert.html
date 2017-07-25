@@ -1,0 +1,12 @@
+<html>
+  <body>
+    <form method='POST' action='{{url_for('createAlert', user_id=user_id)}}'>
+      <h2>Create Alert.</h2>
+      <input type='text' name='Servers' placeholder="Servers"/>
+      <input type='text' name='Date' placeholder="Date"/>
+      <input type='text' name='startTime' placeholder="Start Time"/>
+      <input type='text' name='endTime' placeholder="End Time"/>
+      <input type='submit' value="submit"/>
+    </form>
+  </body>
+</html>
