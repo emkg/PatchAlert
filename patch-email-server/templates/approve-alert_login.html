@@ -1,10 +1,19 @@
 <html>
+  <head>
+    <link rel='stylesheet' type='text/css' href='/static/css/style.css'/>
+  </head>
   <body>
-    <form method='POST' action='{{url_for('loginToApproveAlert', alert_id=alert_id)}}'>
-      <h2>Log in to approve this alert.</h2>
-      <input type='text' placeholder="username"/>
-      <input type='text' placeholder="password"/>
-      <input type='submit' value="LOGIN"/>
-    </form>
+    <div class='page-container'>
+      <form  method='POST' action='{{url_for('loginToApproveAlert', alert_id=alert_id)}}'>
+        <div class='item-box'>
+          <div class='item'>
+            <h3>Log in to approve this alert.</h3>
+            <input type='text' placeholder="username"/>
+            <input type='text' id='password' placeholder="password"/>
+            <input type='submit' value="LOGIN" style='color: white;' class='button'/>
+          </div>
+        </div>
+      </form>
+    </div>
   </body>
 </html>

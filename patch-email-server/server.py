@@ -1,5 +1,19 @@
-from flask import Flask, render_template, url_for, request, redirect, jsonify
+from flask import Flask, flash, render_template, url_for, request, redirect, jsonify
+from flask_mail import Mail, Message
+
 app = Flask(__name__)
+app.secret_key = 'secret'
+mail = Mail()
+
+app.config.update(dict(
+    DEBUG = True,
+    MAIL_SERVER = 'smtp.gmail.com',
+    MAIL_PORT = 465,
+    MAIL_USE_TLS = False,
+    MAIL_USE_SSL = True,
+))
+
+mail.init_app(app)
 
 # import CRUD operations
 from sqlalchemy import create_engine
@@ -27,7 +41,6 @@ def getAllRequestsPerAlertJSON(alert_id):
 def getAllAlertsJSON():
     alerts = session.query(Alert).all()
     return jsonify(alerts=[alert.serialize for alert in alerts])
-
 
 # render templates
 @app.route('/')
@@ -73,6 +86,11 @@ def createAlert(user_id):
             createdBy_id = user_id)
         session.add(newAlert)
         session.commit()
+        flash(sendMail("Hello, A new service alert has been created. "
+        + "Please log in and approve it.",
+        "Webmaster",
+        "example@localhost",
+        "emily.grimes@noaa.gov"))
         return redirect(url_for('showAllAlerts'))
     else:
         return render_template('createAlert.html', user_id=user_id)
@@ -90,13 +108,9 @@ def loginToApproveAlert(alert_id):
 def approveAlert(alert_id, user_id):
     alert = session.query(Alert).filter_by(id = alert_id).one()
     if request.method == 'POST':
-        if request.form['approve'] == "1":
-            # figure out how to set isApproved to form['approve']
-            alert.isApproved = 1
-            session.add(alert)
-            session.commit()
-        else:
-            print "Not approved"
+        alert.isApproved = 1
+        session.add(alert)
+        session.commit()
         return redirect(url_for('showAllAlerts'))
     else:
         return render_template('approve.html', alert=alert, alert_id=alert_id, user_id=user_id)
@@ -105,6 +119,14 @@ def approveAlert(alert_id, user_id):
 def getStats(alert_id):
     return render_template('stats.html', alert_id=alert_id)
 
+def sendMail(message, senderName, sender, recipient):
+    '''
+    msg = Message(message,
+                  sender=(senderName, sender),
+                  recipients=[recipient])
+    mail.send(msg)
+    '''
+    return senderName + "@ " + sender + " says: \n" + message + "\n to: " + recipient
 
 if __name__ == '__main__':
     app.debug = True # restart server on changes

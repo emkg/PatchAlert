@@ -1,13 +1,18 @@
 <html>
+  <head>
+    <link rel='stylesheet' type='text/css' href='/static/css/style.css'/>
+  </head>
   <body>
-    <form method='POST' action='{{url_for('requestException', alert_id=alert_id)}}'>
-      <h2>Request an Exception to the Patch.</h2>
-      <input type='text' name='user' placeholder="your name"/>
-      <input type='text' name='server' placeholder="server"/>
-      <input type='text' name='reason' placeholder="reason"/>
-      <input type='text' name='altDate' placeholder="alt date"/>
-      <input type='text' name='altTime' placeholder="alt time"/>
-      <input type='submit' value="submit"/>
-    </form>
+    <div class="page-container form" >
+      <form method='POST' action='{{url_for('requestException', alert_id=alert_id)}}'>
+        <h2>Request an Exception to the Patch.</h2>
+        <input type='text' name='user' placeholder="your name"/><br/>
+        <input type='text' name='server' placeholder="server"/><br/>
+        <input type='text' name='reason' placeholder="reason"/><br/>
+        <input type='text' name='altDate' placeholder="alt date"/><br/>
+        <input type='text' name='altTime' placeholder="alt time"/><br/>
+        <input style='color: white;' class='button' type='submit' value="submit"/>
+      </form>
+    </div>
   </body>
 </html>

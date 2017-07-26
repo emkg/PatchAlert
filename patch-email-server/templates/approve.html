@@ -1,23 +1,42 @@
 <html>
+  <head>
+    <link rel='stylesheet' type='text/css' href='/static/css/style.css'/>
+  </head>
   <body>
 
-    <div>
-      Patch for {{alert.servers}} on {{alert.date}}
-      from {{alert.startTime}} to {{alert.endTime}}
+    <div class='page-container'>
+      <div class='item-box'>
+        <div class='item'>
+          Patch for
+          <span class='data'>{{alert.servers}}</span>
+          on
+          <span class='data'>{{alert.date}}</span>
+          from
+          <span class='data'>{{alert.startTime}}</span>
+          to
+          <span class='data'>{{alert.endTime}}</span>
 
-      created by: {{alert.createdBy}}
-
-      <span id="italic">(pending approval)</span>
+          created by: <span class='data'>{{alert.createdBy}}</span>
+          <br/>
+          <br/>
+          <span id="italic">(pending approval)</span>
+        </div>
+      </div>
     </div>
-
-
-    <!-- change RHS of alert_id to alert.id -->
-    <form method='POST' action='{{url_for('approveAlert', alert_id=alert_id, user_id=user_id)}}'>
-      <h2>Do you approve?</h2>
-      <input type="radio" name="approve" value="1"> Yes
-      <input type="radio" name="approve" value="0"/> No
-      <br/>
-      <input type='submit' value="submit"/>
-    </form>
+    <div class='page-container' style='border: none;'>
+      <form method='POST' action='{{url_for('approveAlert', alert_id=alert.id, user_id=user_id)}}'>
+        <div class='item-box'>
+          <div class='item'>
+            <h3>Do you approve?</h3>
+              <input type='submit' value="YES" style='color:white;' class='button'/>
+              <br/>
+              <br/>
+              <a style='font-size: 0.75em;' href='{{url_for('showAllAlerts')}}'>
+                No, cancel this alert.
+              </a>
+          </div>
+        </div>
+      </form>
+    </div>
   </body>
 </html>

@@ -1,10 +1,19 @@
 <html>
+  <head>
+    <link rel='stylesheet' type='text/css' href='/static/css/style.css' />
+  </head>
   <body>
-    <form method='POST' action='{{url_for('loginToCreateAlert')}}'>
-      <h2>You have to be an admin to create alerts.</h2>
-      <input type='text' name='username' placeholder="username"/>
-      <input type='text' name='password' placeholder="password"/>
-      <input type='submit' value="log in"/>
-    </form>
+    <div class='page-container'>
+      <form method='POST' action='{{url_for('loginToCreateAlert')}}'>
+        <div class='item-box'>
+          <div class='item'>
+            <h2>You have to be an admin to create alerts.</h2>
+            <input type='text' name='username' placeholder="username"/>
+            <input type='text' name='password' placeholder="password"/>
+            <input type='submit' value="LOGIN" style='color: white;' class='button'/>
+          </div>
+        </div>
+      </form>
+    </div>
   </body>
 </html>

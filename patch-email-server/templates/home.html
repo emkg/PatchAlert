@@ -3,27 +3,47 @@
     <link rel='stylesheet' type='text/css' href='/static/css/style.css'/>
   </head>
   <body>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class=flashes>
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
 
     {% for alert in alerts %}
       <div class='page-container'>
         <div class='item-box' >
           <div class='item'>
-            Patch for {{alert.servers}} on {{alert.date}}
-            from {{alert.startTime}} to {{alert.endTime}}
+            Patch for <span class='data'>{{alert.servers}}</span>
+            on <span class='data'>{{alert.date}}</span>
+            <br/>
+            from <span class='data'>{{alert.startTime}}</span>
+            to <span class='data'>{{alert.endTime}}</span>
           </div>
           <div class='buttons' >
-            <a href='{{url_for('getStats', alert_id=alert.id)}}' >STATS</a>
+            <div class='button'>
+              <a href='{{url_for('requestException', alert_id=alert.id)}}' >
+                <span span class='button-text'>REQUEST EXCEPTION</span>
+              </a>
+            </div>
             <br/>
-            <a href='{{url_for('requestException', alert_id=alert.id)}}' >REQUEST EXCEPTION</a>
             <br/>
+              <a href='{{url_for('getStats', alert_id=alert.id)}}'>
+                GET STATS
+              </a>
             <br/>
-          </div>          
+          </div>
         </div>
       </div>
     {% endfor %}
 
-
-    <a href='{{url_for('loginToCreateAlert')}}'> New Alert </a>
+    <a id='new-alert' href='{{url_for('loginToCreateAlert')}}'>
+      <img src='/static/img/ic_note_add_black_48px.svg' alt="New Alert"/>
+      <span><br/>New Alert</span>
+    </a>
 
   </body>
 </html>
