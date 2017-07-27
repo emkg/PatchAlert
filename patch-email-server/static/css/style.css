@@ -7,6 +7,11 @@ body {
   font-family: 'Roboto', Helvetica, sans-serif;
 }
 
+ul.flashes {
+  list-style-type: none;
+  font-size: .5em;
+  color: lightgray;
+}
 .page-container {
   display: flex;
   flex-direction: column;
@@ -28,6 +33,10 @@ body {
   text-align: center;
   font-size: 2em;
   margin-bottom: 16px;
+}
+
+.item li {
+  margin: 16px;
 }
 
 .button {
