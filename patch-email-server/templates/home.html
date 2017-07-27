@@ -5,6 +5,7 @@
   <body>
     {% with messages = get_flashed_messages() %}
       {% if messages %}
+      <div class='alt-page-container'>
         <ul class='flashes'>
           {% for message in messages %}
             <div class='item'>
@@ -12,12 +13,12 @@
             </div>
           {% endfor %}
         </ul>
+      </div>
       {% endif %}
     {% endwith %}
 
     {% for alert in alerts %}
       <div class='page-container'>
-        <div class='item-box' >
           <div class='item'>
             Patch for <span class='data'>{{alert.servers}}</span>
             on <span class='data'>{{alert.date}}</span>
@@ -38,7 +39,6 @@
               </a>
             <br/>
           </div>
-        </div>
       </div>
     {% endfor %}
 

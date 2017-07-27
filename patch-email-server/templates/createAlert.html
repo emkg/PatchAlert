@@ -5,15 +5,13 @@
   <body>
     <div class='page-container'>
       <form method='POST' action='{{url_for('createAlert', user_id=user_id)}}'>
-        <div class='item-box'>
-          <div class='item'>
-            <h2>Create Alert.</h2>
-            <input type='text' name='Servers' placeholder="Servers"/>
-            <input type='text' name='Date' placeholder="Date"/>
-            <input type='text' name='startTime' placeholder="Start Time"/>
-            <input type='text' name='endTime' placeholder="End Time"/>
-            <input style='color: white;' class='button' type='submit' value="submit"/>
-          </div>
+        <div class='item'>
+          <h2>Create Alert.</h2>
+          <input type='text' name='Servers' placeholder="Servers"/>
+          <input type='text' name='Date' placeholder="Date"/>
+          <input type='text' name='startTime' placeholder="Start Time"/>
+          <input type='text' name='endTime' placeholder="End Time"/>
+          <input style='color: white;' class='button' type='submit' value="submit"/>
         </div>
       </form>
     </div>

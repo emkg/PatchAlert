@@ -63,6 +63,7 @@ def requestException(alert_id):
             alert = alert)
         session.add(newRequest)
         session.commit()
+        flash("Your request has been submitted. Thank you!")
         return redirect(url_for('showAllAlerts'))
     else:
         return render_template('request.html', alert_id=alert_id)
@@ -86,11 +87,16 @@ def createAlert(user_id):
             createdBy_id = user_id)
         session.add(newAlert)
         session.commit()
-        flash(sendMail("Hello, A new service alert has been created. "
-        + "Please log in and approve it.",
+        flash("A new service alert has been created. It will appear here on approval by the appropriate admin.")
+
+        '''
+        sendMail("Hello,<br/>A new service alert has been created. "
+        + "Please log in and approve it. <br/><br/>Thank you!",
         "Webmaster",
         "example@localhost",
-        "emily.grimes@noaa.gov"))
+        "example@localhost")
+        '''
+
         return redirect(url_for('showAllAlerts'))
     else:
         return render_template('createAlert.html', user_id=user_id)
@@ -111,6 +117,15 @@ def approveAlert(alert_id, user_id):
         alert.isApproved = 1
         session.add(alert)
         session.commit()
+        flash("The alert has been approved!")
+        '''
+        # add more information to the message
+        sendMail("Hello,<br/>A new service alert has been created. Please login to see details."
+        + "<br/><br/>Thank you!",
+        "Webmaster",
+        "example@localhost",
+        "exampleTeam@localhost")
+        '''
         return redirect(url_for('showAllAlerts'))
     else:
         return render_template('approve.html', alert=alert, alert_id=alert_id, user_id=user_id)
@@ -127,6 +142,11 @@ def sendMail(message, senderName, sender, recipient):
     mail.send(msg)
     '''
     return senderName + "@ " + sender + " says: \n" + message + "\n to: " + recipient
+
+# need additional timer function that checks if alerts are expired
+# may need to reconfigure db to inlcude an expiration date/time
+# when an alert expires, send email to admin-creator(s) with stats,
+# or link to stats
 
 if __name__ == '__main__':
     app.debug = True # restart server on changes
