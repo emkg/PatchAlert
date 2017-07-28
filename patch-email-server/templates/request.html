@@ -7,19 +7,38 @@
       <form method='POST' action='{{url_for('requestException', alert_id=alert_id)}}'>
         <h2>Request an Exception to the Patch.</h2>
         <br/><br/>
+
         Please let us know who you are: <br/>
         <input type='text' name='user' /><br/>
-        What server do you need withheld from the scheduled update? <br/>
-        <input type='text' name='server' /><br/>
+
+        What server do you need withheld from the scheduled update? <br/><br/>
+        <select id='server' name='server'>
+          <option value=""></option>
+        </select> <br/>
+
         Please prodive a reason why you need this exception: <br/>
-        <textarea type='text' name='reason' rows='4'></textarea><br/>
+        <textarea type='text' name='reason' rows='4'></textarea><br/><br/>
+
         What would be an acceptible date and time to reschedule this update? <br/>
         <input type='date' name='altDate' placeholder="alt date"/><br/>
         <input type='time' name='altTime' placeholder="alt time"/><br/>
+
         <div class='item'>
-        <input style='color: white;' class='button' type='submit' value="submit"/>
-      </div>
+          <input style='color: white;' class='button' type='submit' value="submit"/>
+        </div>
       </form>
     </div>
+    <script>
+        var servers = {{alert.servers|safe}};
+        for(var i = 0; i < servers.length; i++) {
+          var option = document.createElement("option");
+          option.setAttribute('value', server[i]);
+          document.getElementById("server").appendChild(option);
+          var text = document.createTextNode(servers[i]);
+          option.appendChild(text);
+        };
+
+    </script>
+
   </body>
 </html>

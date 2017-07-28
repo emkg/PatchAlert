@@ -1,5 +1,6 @@
 from flask import Flask, flash, render_template, url_for, request, redirect, jsonify
 from flask_mail import Mail, Message
+import json
 
 app = Flask(__name__)
 app.secret_key = 'secret'
@@ -52,10 +53,10 @@ def showAllAlerts():
 
 @app.route('/request/<int:alert_id>/', methods=['GET','POST'])
 def requestException(alert_id):
+    alert = session.query(Alert).filter_by(id = alert_id).one()
     if request.method == 'POST':
-        alert = session.query(Alert).filter_by(id = alert_id).one()
         newRequest = Request(
-            server=request.form['server'],
+            server=request.args.get('server'),
             reason=request.form['reason'],
             altDate=request.form['altDate'],
             altTime=request.form['altTime'],
@@ -66,20 +67,20 @@ def requestException(alert_id):
         flash("Your request has been submitted. Thank you!")
         return redirect(url_for('showAllAlerts'))
     else:
-        return render_template('request.html', alert_id=alert_id)
+        return render_template('request.html', alert_id=alert_id, alert=alert)
 
 @app.route('/new/login', methods=['GET','POST'])
 def loginToCreateAlert():
     if request.method == 'POST':
         return redirect(url_for('createAlert', user_id=1))
     else:
-        return render_template('new-alert_login.html')
+        return render_template('createAlert_login.html')
 
 @app.route('/new/<int:user_id>/', methods=['GET','POST'])
 def createAlert(user_id):
     if request.method == 'POST':
         newAlert = Alert(
-            servers=request.form['Servers'],
+            servers=getServersAsJSONString(request.form['Servers']),
             date=request.form['Date'],
             startTime=request.form['startTime'],
             endTime=request.form['endTime'],
@@ -107,7 +108,7 @@ def loginToApproveAlert(alert_id):
     if request.method == 'POST':
         return redirect(url_for('approveAlert', user_id=1, alert_id=alert_id))
     else:
-        return render_template('approve-alert_login.html', alert_id=alert_id)
+        return render_template('approve_login.html', alert_id=alert_id)
 
 @app.route('/PatchAlert/new/<int:alert_id>/<int:user_id>/approval', methods=['GET','POST'])
 @app.route('/new/<int:alert_id>/<int:user_id>/approval', methods=['GET','POST'])
@@ -142,6 +143,17 @@ def sendMail(message, senderName, sender, recipient):
     mail.send(msg)
     '''
     return senderName + "@ " + sender + " says: \n" + message + "\n to: " + recipient
+
+
+def getServersAsJSONString(stringlistOfServers):
+    if stringlistOfServers:
+        listlistOfServers = stringlistOfServers.split(' ')
+        jso = json.dumps(listlistOfServers)
+
+        return jso
+    else:
+        return "No servers listed :("
+
 
 # need additional timer function that checks if alerts are expired
 # may need to reconfigure db to inlcude an expiration date/time

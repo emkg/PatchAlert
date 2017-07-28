@@ -16,7 +16,7 @@ class User(Base):
 class Alert(Base):
     __tablename__ = 'alert'
 
-    servers = Column(String(500), nullable=False)
+    servers = Column(String(2000), nullable=False)
     date = Column(String(10), nullable=False)
     startTime = Column(String(8), nullable=False)
     endTime = Column(String(8), nullable=False)

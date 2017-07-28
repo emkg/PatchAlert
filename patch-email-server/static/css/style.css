@@ -75,14 +75,23 @@ a .button-text {
   color: rgb(255, 255, 255);
 }
 
-input {
+input, select, option {
   margin-bottom: 20px;
-  width: 50%;
   height: 5vh;
   border: solid black;
   border-width: 0 0 1px 0;
   font-size: 1em;
+  background-color: white;
+}
 
+select {
+  width: 100%;
+  -webkit-appearance: none;
+  -webkit-border-radius: 0px;
+}
+
+select:focus, textarea:focus {
+  outline: 0;
 }
 
 textarea {
