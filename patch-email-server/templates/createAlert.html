@@ -5,14 +5,17 @@
   <body>
     <div class='page-container'>
       <form method='POST' action='{{url_for('createAlert', user_id=user_id)}}'>
-        <div class='item'>
-          <h2>Create Alert.</h2>
+          <h2>Create a new alert of service.</h2>
+          <br/><br/>
+          What servers will be affected?<br/>
           <input type='text' name='Servers' placeholder="Servers"/>
-          <input type='text' name='Date' placeholder="Date"/>
-          <input type='text' name='startTime' placeholder="Start Time"/>
-          <input type='text' name='endTime' placeholder="End Time"/>
-          <input style='color: white;' class='button' type='submit' value="submit"/>
-        </div>
+          When will the service take place? <br/>
+          <input type='date' name='Date' placeholder="Date"/>
+          From what time:<br/>
+          <input type='time' name='startTime' placeholder="Start Time"/>
+          To what time: <br/>
+          <input type='time' name='endTime' placeholder="End Time"/>
+        <div class='item'>  <input style='color: white;' class='button' type='submit' value="submit"/></div>
       </form>
     </div>
   </body>
