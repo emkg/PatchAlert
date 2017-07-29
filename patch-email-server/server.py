@@ -49,7 +49,7 @@ def getAllAlertsJSON():
 @app.route('/PatchAlert')
 def showAllAlerts():
     alerts = session.query(Alert).filter_by(isApproved = 1).all()
-    return render_template('home.html', alerts = alerts)
+    return render_template('home.html', alerts = alerts, json=json)
 
 @app.route('/request/<int:alert_id>/', methods=['GET','POST'])
 def requestException(alert_id):

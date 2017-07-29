@@ -3,6 +3,7 @@
     <link rel='stylesheet' type='text/css' href='/static/css/style.css'/>
   </head>
   <body>
+    
     {% with messages = get_flashed_messages() %}
       {% if messages %}
       <div class='alt-page-container'>
@@ -16,16 +17,38 @@
       </div>
       {% endif %}
     {% endwith %}
+    
+    Service Alerts
 
     {% for alert in alerts %}
       <div class='page-container'>
           <div class='item'>
-            Patch for <span class='data'>{{alert.servers}}</span>
+            <span style='margin-bottom: 20px; text-align:left;'>Maintenence has been scheduled for</span> <br/>
+            <div class='scrolly-list'>  
+              {% set servers = json.loads(alert.servers) %}
+    
+              {% for s in servers %}
+              <div class='scrolly-list-item'>
+                  <img src='/static/img/ic_system_update_black_18px.svg'>
+                    <div style='padding: 16px 50px;'>  {{s}} </div> 
+              </div>
+              {% endfor %}
+              <img style='style=
+                      display: block; 
+                      position: relative; 
+                      margin-top: -9.02px;
+                      max-width: 330px;' 
+                    src='/static/img/bottom-tear.svg'/>
+            </div>
+          
+            <br/>
             on <span class='data'>{{alert.date}}</span>
             <br/>
             from <span class='data'>{{alert.startTime}}</span>
             to <span class='data'>{{alert.endTime}}</span>
           </div>
+        
+        
           <div class='buttons' >
             <div class='button'>
               <a href='{{url_for('requestException', alert_id=alert.id)}}' >
@@ -34,16 +57,17 @@
             </div>
             <br/>
             <br/>
-              <a href='{{url_for('getStats', alert_id=alert.id)}}'>
-                GET STATS
+              <a class='img-link' href='{{url_for('getStats', alert_id=alert.id)}}'>
+                <img src='/static/img/ic_poll_black_24px.svg' />
+                <span><br/>GET STATS<span>
               </a>
             <br/>
           </div>
       </div>
     {% endfor %}
 
-    <a id='new-alert' href='{{url_for('loginToCreateAlert')}}'>
-      <img src='/static/img/ic_note_add_black_48px.svg' alt="New Alert"/>
+    <a class='img-link' href='{{url_for('loginToCreateAlert')}}'>
+      <img src='/static/img/ic_add_alert_black_48px.svg' alt="New Alert"/>
       <span><br/>New Alert</span>
     </a>
 
