@@ -56,7 +56,7 @@ def requestException(alert_id):
     alert = session.query(Alert).filter_by(id = alert_id).one()
     if request.method == 'POST':
         newRequest = Request(
-            server=request.args.get('server'),
+            server=request.form['server'],
             reason=request.form['reason'],
             altDate=request.form['altDate'],
             altTime=request.form['altTime'],
@@ -67,7 +67,7 @@ def requestException(alert_id):
         flash("Your request has been submitted. Thank you!")
         return redirect(url_for('showAllAlerts'))
     else:
-        return render_template('request.html', alert_id=alert_id, alert=alert)
+        return render_template('request.html', alert_id=alert_id, alert=alert, json=json)
 
 @app.route('/new/login', methods=['GET','POST'])
 def loginToCreateAlert():

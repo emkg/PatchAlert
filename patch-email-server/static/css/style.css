@@ -75,6 +75,10 @@ a .button-text {
   color: rgb(255, 255, 255);
 }
 
+h1 {
+  margin-top: 20px;
+}
+
 input, select, option {
   margin-bottom: 20px;
   height: 5vh;
@@ -165,39 +169,33 @@ input {
 }
 
 .scrolly-list {
-  border-top: 1px solid rgb(217, 217, 217); 
-  border-right: 2px solid rgb(217, 217, 217); 
-  border-bottom: none; 
-  border-left: 2px solid rgb(217, 217, 217); 
+  border-top: 1px solid rgb(217, 217, 217);
+  border-right: 2px solid rgb(217, 217, 217);
+  border-bottom: 1px solid rgb(217, 217, 217);
+  border-left: 2px solid rgb(217, 217, 217);
   overflow: scroll;
   width: 325px;
-  margin: 0 auto;
+  margin: 20 auto;
   padding: 0;
   max-height: 180px;
 }
 
-.scrolly-list ul, .scrolly-list li {
-  list-style-type: none;
-}
-
 .scrolly-list-item {
-  style="margin-left: 0px; 
-  padding: 24px 24px 24px 72px; 
   position: relative;
   font-size: 24px;
   text-align: left;
 }
 
 .scrolly-list-item img {
-  color: rgb(255, 255, 255); 
-  background-color: rgb(255, 255, 255); 
-  user-select: none; 
-  display: inline-flex; 
-  align-items: center; 
-  justify-content: center; 
-  height: 24px; 
-  width: 24px; 
-  position: absolute; 
-  top: 16px; 
+  color: rgb(255, 255, 255);
+  background-color: rgb(255, 255, 255);
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  width: 24px;
+  position: absolute;
+  top: 16px;
   left: 16px;
 }
