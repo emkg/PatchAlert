@@ -1,5 +1,6 @@
 from flask import Flask, flash, render_template, url_for, request, redirect, jsonify
 from flask_mail import Mail, Message
+from sqlalchemy import distinct, func
 import json
 
 app = Flask(__name__)
@@ -80,7 +81,7 @@ def loginToCreateAlert():
 def createAlert(user_id):
     if request.method == 'POST':
         newAlert = Alert(
-            servers=getServersAsJSONString(request.form['Servers']),
+            servers=json.dumps(request.form['Servers']),
             date=request.form['Date'],
             startTime=request.form['startTime'],
             endTime=request.form['endTime'],
@@ -133,7 +134,23 @@ def approveAlert(alert_id, user_id):
 
 @app.route('/PatchAlert/<int:alert_id>/stats')
 def getStats(alert_id):
-    return render_template('stats.html', alert_id=alert_id)
+    requests = session.query(Request).filter_by(alert_id = alert_id).all()
+    alert = session.query(Alert).filter_by(id = alert_id).one()
+    serverCounts = getCounts(json.loads(alert.servers), requests)
+    return render_template('stats.html', alert_id=alert_id,
+                                        requests=requests,
+                                        servers=serverCounts,
+                                        json=json)
+def getCounts(listOfThingsToCount, listOfInstancesOfTheThing):
+    servers = set(listOfThingsToCount)
+    countsDictionary = {};
+    for s in servers:
+        count = 0
+        for i in listOfInstancesOfTheThing:
+            if i.server == s:
+                count = count + 1
+        countsDictionary.update({s : count})
+    return countsDictionary
 
 def sendMail(message, senderName, sender, recipient):
     '''
@@ -144,15 +161,6 @@ def sendMail(message, senderName, sender, recipient):
     '''
     return senderName + "@ " + sender + " says: \n" + message + "\n to: " + recipient
 
-
-def getServersAsJSONString(stringlistOfServers):
-    if stringlistOfServers:
-        listlistOfServers = stringlistOfServers.split(' ')
-        jso = json.dumps(listlistOfServers)
-
-        return jso
-    else:
-        return "No servers listed :("
 
 
 # need additional timer function that checks if alerts are expired

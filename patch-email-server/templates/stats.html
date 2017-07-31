@@ -1,12 +1,17 @@
 <html>
   <head>
       <link rel='stylesheet' type='text/css' href='/static/css/style.css'/>
+      <script src="https://d3js.org/d3.v4.min.js"></script>
   </head>
   <body>
     <div class='page-container'>
       <div class='item-box'>
         <div class='item'>
-          Stats will live here. Stay tuned.
+          {% for s in servers %}
+            {{s}} : {{s.value}}
+            <br/>
+            <br/>
+          {% endfor %}
         </div>
       </div>
     </div>
