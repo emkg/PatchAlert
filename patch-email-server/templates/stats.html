@@ -7,13 +7,21 @@
     <div class='page-container'>
       <div class='item-box'>
         <div class='item'>
-          {% for s in servers %}
-            {{s}} : {{s.value}}
-            <br/>
-            <br/>
-          {% endfor %}
+          <div class="chart">
+
+          </div>
         </div>
       </div>
     </div>
+    <script>
+      let data = {{ servers | safe }}
+      d3.select(".chart")
+        .selectAll("div")
+          .data(data)
+        .enter().append("div")
+          .style("width", function(d) { return d.count * 100 + "px"; })
+	        .style("background-color", "blue")
+          .text(function(d) { return d.name; });
+    </script>
   </body>
 </html>

@@ -135,21 +135,24 @@ def approveAlert(alert_id, user_id):
 @app.route('/PatchAlert/<int:alert_id>/stats')
 def getStats(alert_id):
     requests = session.query(Request).filter_by(alert_id = alert_id).all()
-    alert = session.query(Alert).filter_by(id = alert_id).one()
-    serverCounts = getCounts(json.loads(alert.servers), requests)
+    requestServers = []
+    for r in requests:
+        requestServers.append(r.server)
+    requestServers = getCounts(requestServers)
+    serverCounts = []
+    for k, v in requestServers.items():
+        serverCounts.append({'name' : k, 'count' : v})
+    serverCounts = json.dumps(serverCounts)
     return render_template('stats.html', alert_id=alert_id,
-                                        requests=requests,
-                                        servers=serverCounts,
-                                        json=json)
-def getCounts(listOfThingsToCount, listOfInstancesOfTheThing):
-    servers = set(listOfThingsToCount)
+                                        servers=serverCounts)
+def getCounts(listOfThings):
     countsDictionary = {};
-    for s in servers:
+    for i in listOfThings:
         count = 0
-        for i in listOfInstancesOfTheThing:
-            if i.server == s:
+        for j in listOfThings:
+            if j == i:
                 count = count + 1
-        countsDictionary.update({s : count})
+        countsDictionary.update({i : count})
     return countsDictionary
 
 def sendMail(message, senderName, sender, recipient):
