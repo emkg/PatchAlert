@@ -1,27 +1,35 @@
 <html>
   <head>
       <link rel='stylesheet' type='text/css' href='/static/css/style.css'/>
-      <script src="https://d3js.org/d3.v4.min.js"></script>
+      <script src="/static/js/d3/d3.js" charset="utf-8"></script>
   </head>
   <body>
     <div class='page-container'>
-      <div class='item-box'>
-        <div class='item'>
           <div class="chart">
-
           </div>
-        </div>
-      </div>
     </div>
     <script>
-      let data = {{ servers | safe }}
-      d3.select(".chart")
-        .selectAll("div")
+      var data = {{ servers | safe }}
+      var svg = d3.select('.chart').append('svg');
+
+      svg.style('width', '100%').style('height', '100%')
+        .selectAll('rect')
           .data(data)
-        .enter().append("div")
-          .style("width", function(d) { return d.count * 100 + "px"; })
-	        .style("background-color", "blue")
-          .text(function(d) { return d.name; });
+        .enter().append('rect')
+          .attr('class', 'bar')
+          .attr('width', function(d, i) { return (d.count * 100) })
+          .attr('height','40')
+          .attr('y', function(d, i) { return 400 - (i * 60 + 25) })
+          .attr('x', '50');
+
+      svg.selectAll('text')
+        .data(data)
+        .enter().append('text')
+        .text(function(d) {return d.name + " - " + d.count;})
+            .attr('y', function(d, i) {return 400 - (i * 60) })
+            .attr('x', function(d, i) {return (d.count)});;
+
+
     </script>
   </body>
 </html>
