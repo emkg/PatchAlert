@@ -19,46 +19,54 @@
     {% endwith %}
 
     <h1>Service Alerts</h1>
+    {% if alerts %}
+      {% for alert in alerts %}
+        <div class='page-container'>
+            <div class='item'>
+              <span style='font-size: 0.75em;'>
+                Maintenence has been scheduled for</span>
+                <br/>
+              <div class='scrolly-list'>
+                {% set servers = json.loads(alert.servers) %}
 
-    {% for alert in alerts %}
-      <div class='page-container'>
-          <div class='item'>
-            <span style='font-size: 0.75em;'>
-              Maintenence has been scheduled for</span>
-              <br/>
-            <div class='scrolly-list'>
-              {% set servers = json.loads(alert.servers) %}
-
-              {% for s in servers %}
-              <div class='scrolly-list-item'>
-                  <img src='/static/img/ic_system_update_black_18px.svg'>
-                    <div style='padding: 16px 50px;'>  {{s}} </div>
+                {% for s in servers %}
+                <div class='scrolly-list-item'>
+                    <img src='/static/img/ic_system_update_black_18px.svg'>
+                      <div style='padding: 16px 50px;'>  {{s}} </div>
+                </div>
+                {% endfor %}
               </div>
-              {% endfor %}
+              on <span class='data'>{{alert.date}}</span>
+              <br/>
+              from <span class='data'>{{alert.startTime}}</span>
+              to <span class='data'>{{alert.endTime}}</span>
             </div>
-            on <span class='data'>{{alert.date}}</span>
-            <br/>
-            from <span class='data'>{{alert.startTime}}</span>
-            to <span class='data'>{{alert.endTime}}</span>
-          </div>
 
 
-          <div class='buttons' >
-            <div class='button'>
-              <a href='{{url_for('requestException', alert_id=alert.id)}}' >
-                <span span class='button-text'>REQUEST EXCEPTION</span>
-              </a>
+            <div class='buttons' >
+              <div class='button'>
+                <a href='{{url_for('requestException', alert_id=alert.id)}}' >
+                  <span span class='button-text'>REQUEST EXCEPTION</span>
+                </a>
+              </div>
+              <br/>
+              <br/>
+                <a class='img-link' href='{{url_for('getStats', alert_id=alert.id)}}'>
+                  <img src='/static/img/ic_poll_black_24px.svg' />
+                  <span><br/>GET STATS<span>
+                </a>
+              <br/>
             </div>
-            <br/>
-            <br/>
-              <a class='img-link' href='{{url_for('getStats', alert_id=alert.id)}}'>
-                <img src='/static/img/ic_poll_black_24px.svg' />
-                <span><br/>GET STATS<span>
-              </a>
-            <br/>
-          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class='page-container'>
+        <div class='item'>
+          <span style='font-size: 0.5em; font-style: italic;'>There are no service alerts right now.</span>
+        </div>
       </div>
-    {% endfor %}
+    {% endif %}
+
 
     <a class='img-link' href='{{url_for('loginToCreateAlert')}}'>
       <img src='/static/img/ic_add_alert_black_48px.svg' alt="New Alert"/>

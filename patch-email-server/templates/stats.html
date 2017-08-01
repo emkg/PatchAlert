@@ -1,35 +1,52 @@
 <html>
   <head>
       <link rel='stylesheet' type='text/css' href='/static/css/style.css'/>
-      <script src="/static/js/d3/d3.js" charset="utf-8"></script>
+      <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   </head>
   <body>
-    <div class='page-container'>
-          <div class="chart">
-          </div>
+    <div class='page-container' style='flex-direction: row;'>
+        Summary of Exceptions Requested 
+        <div id='chart'></div>
+        <div id='chart2'></div>
     </div>
-    <script>
-      var data = {{ servers | safe }}
-      var svg = d3.select('.chart').append('svg');
 
-      svg.style('width', '100%').style('height', '100%')
-        .selectAll('rect')
-          .data(data)
-        .enter().append('rect')
-          .attr('class', 'bar')
-          .attr('width', function(d, i) { return (d.count * 100) })
-          .attr('height','40')
-          .attr('y', function(d, i) { return 400 - (i * 60 + 25) })
-          .attr('x', '50');
+    <script type="text/javascript">
+        // Load the Visualization API and the corechart package.
+        google.charts.load('current', {'packages':['corechart']});
+        // Set a callback to run when the Google Visualization API is loaded.
+        google.charts.setOnLoadCallback(drawChart);
+        // Callback that creates and populates a data table,
+        // instantiates the pie chart, passes in the data and
+        // draws it.
+        function drawChart() {
+          // Create the data table.
+          var data = new google.visualization.DataTable();
+          data.addColumn('string', 'Server');
+          data.addColumn('number', 'Count');
+          data.addRows([
+            {% for k,v in servers.items() %}
+              ['{{k}}', {{v}}],
+            {%endfor%}
+          ]);
 
-      svg.selectAll('text')
-        .data(data)
-        .enter().append('text')
-        .text(function(d) {return d.name + " - " + d.count;})
-            .attr('y', function(d, i) {return 400 - (i * 60) })
-            .attr('x', function(d, i) {return (d.count)});;
+          var data2 = google.visualization.arrayToDataTable([
+            ['Server', 'Count'],
+            {% for k,v in servers.items() %}
+              ['{{k}}', {{v}}],
+            {%endfor%}
+          ]);
 
-
+          // Set chart options
+          var options = {'title':'Requested Servers',
+                         'width':400,
+                         'height':400,
+                         'legend': { position: 'none' }};
+          // Instantiate and draw our chart, passing in some options.
+          var chart = new google.visualization.PieChart(document.getElementById('chart'));
+          chart.draw(data, options);
+          var chart2 = new google.visualization.BarChart(document.getElementById('chart2'));
+          chart2.draw(data, options);
+        }
     </script>
   </body>
 </html>

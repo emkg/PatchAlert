@@ -80,8 +80,9 @@ def loginToCreateAlert():
 @app.route('/new/<int:user_id>/', methods=['GET','POST'])
 def createAlert(user_id):
     if request.method == 'POST':
+        serverData = request.form['Servers'].split(' ')
         newAlert = Alert(
-            servers=json.dumps(request.form['Servers']),
+            servers=json.dumps(serverData),
             date=request.form['Date'],
             startTime=request.form['startTime'],
             endTime=request.form['endTime'],
@@ -130,7 +131,10 @@ def approveAlert(alert_id, user_id):
         '''
         return redirect(url_for('showAllAlerts'))
     else:
-        return render_template('approve.html', alert=alert, alert_id=alert_id, user_id=user_id)
+        return render_template('approve.html', alert=alert,
+                                               alert_id=alert_id,
+                                               user_id=user_id,
+                                               json=json)
 
 @app.route('/PatchAlert/<int:alert_id>/stats')
 def getStats(alert_id):
@@ -139,12 +143,12 @@ def getStats(alert_id):
     for r in requests:
         requestServers.append(r.server)
     requestServers = getCounts(requestServers)
-    serverCounts = []
-    for k, v in requestServers.items():
-        serverCounts.append({'name' : k, 'count' : v})
-    serverCounts = json.dumps(serverCounts)
+    #serverCounts = []
+    #for k, v in requestServers.items():
+    #    serverCounts.append({'name' : k, 'count' : v})
+    #serverCounts = json.dumps(serverCounts)
     return render_template('stats.html', alert_id=alert_id,
-                                        servers=serverCounts)
+                                         servers=requestServers)
 def getCounts(listOfThings):
     countsDictionary = {};
     for i in listOfThings:

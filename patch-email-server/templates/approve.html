@@ -7,18 +7,23 @@
     <div class='page-container'>
       <div class='item'>
         Patch for
-        <span class='data'>{{alert.servers}}</span>
-        on
-        <span class='data'>{{alert.date}}</span>
-        from
-        <span class='data'>{{alert.startTime}}</span>
-        to
-        <span class='data'>{{alert.endTime}}</span>
+        <div class='scrolly-list'>
+          {% set servers = json.loads(alert.servers) %}
 
-        created by: <span class='data'>{{alert.createdBy}}</span>
-        <br/>
-        <br/>
-        <span id="italic">(pending approval)</span>
+          {% for s in servers %}
+          <div class='scrolly-list-item'>
+              <img src='/static/img/ic_system_update_black_18px.svg'>
+                <div style='padding: 16px 50px;'>  {{s}} </div>
+          </div>
+          {% endfor %}
+        </div>
+          on <span class='data'>{{alert.date}}</span>
+          <br/>
+          from <span class='data'>{{alert.startTime}}</span>
+          to <span class='data'>{{alert.endTime}}</span>
+          <br/>
+          <br/>
+        <span style='font-style: italic; font-size: 0.5em;'>(pending approval)</span>
       </div>
     </div>
     <div class='page-container' style='border: none;'>
@@ -36,5 +41,6 @@
         </div>
       </form>
     </div>
+     {{servers}}
   </body>
 </html>
