@@ -4,9 +4,9 @@
   </head>
   <body>
     <div class='page-container'>
-      <form method='POST' action='{{url_for('loginToCreateAlert')}}'>
+      <form method='POST' action='{{url_for('adminLogin')}}'>
         <div class='item'>
-          <h2>You have to be an admin to create alerts.</h2>
+          <h2>You have to be an admin to proceed.</h2>
           <input type='text' name='username' placeholder="username"/>
           <input type='text' name='password' placeholder="password"/>
           <input type='submit' value="LOGIN" style='color: white;' class='button'/>

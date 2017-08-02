@@ -3,6 +3,8 @@ from flask_mail import Mail, Message
 from sqlalchemy import distinct, func
 import json
 
+user = False;
+
 app = Flask(__name__)
 app.secret_key = 'secret'
 mail = Mail()
@@ -28,7 +30,9 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind = engine)
 session = DBSession()
 
-# API
+'''
+### API
+'''
 @app.route('/PatchAlert/requests/JSON')
 def getAllRequestsJSON():
     requests = session.query(Request).all()
@@ -43,8 +47,13 @@ def getAllRequestsPerAlertJSON(alert_id):
 def getAllAlertsJSON():
     alerts = session.query(Alert).all()
     return jsonify(alerts=[alert.serialize for alert in alerts])
+'''
+### TEMPLATES
+'''
 
-# render templates
+### BASIC APP
+
+# home
 @app.route('/')
 @app.route('/home')
 @app.route('/PatchAlert')
@@ -56,8 +65,10 @@ def showAllAlerts():
 def requestException(alert_id):
     alert = session.query(Alert).filter_by(id = alert_id).one()
     if request.method == 'POST':
+        servers = request.form['server'].replace(', ', ',')
+        #servers = servers.split(r'[;,\s,+\s]')
         newRequest = Request(
-            server=request.form['server'],
+            server=servers,
             reason=request.form['reason'],
             altDate=request.form['altDate'],
             altTime=request.form['altTime'],
@@ -70,15 +81,30 @@ def requestException(alert_id):
     else:
         return render_template('request.html', alert_id=alert_id, alert=alert, json=json)
 
-@app.route('/new/login', methods=['GET','POST'])
-def loginToCreateAlert():
-    if request.method == 'POST':
-        return redirect(url_for('createAlert', user_id=1))
-    else:
-        return render_template('createAlert_login.html')
+### ADMIN FUNCTIONS
 
-@app.route('/new/<int:user_id>/', methods=['GET','POST'])
-def createAlert(user_id):
+# admin login
+@app.route('/PatchAlert/admin/login', methods=['GET','POST'])
+def adminLogin():
+    if request.method == 'POST':
+        global user
+        user = True
+        return redirect(url_for('showAllAlertsAdmin'))
+    else:
+        return render_template('login.html')
+
+# admin home
+@app.route('/PatchAlert/admin')
+def showAllAlertsAdmin():
+    if user == False:
+        return redirect(url_for('adminLogin'))
+    else:
+        alerts = session.query(Alert).all()
+        return render_template('adminHome.html', alerts = alerts, json=json)
+
+# create alert
+@app.route('/new', methods=['GET','POST'])
+def createAlert():
     if request.method == 'POST':
         serverData = request.form['Servers'].split(' ')
         newAlert = Alert(
@@ -86,8 +112,7 @@ def createAlert(user_id):
             date=request.form['Date'],
             startTime=request.form['startTime'],
             endTime=request.form['endTime'],
-            isApproved = 0,
-            createdBy_id = user_id)
+            isApproved = 0)
         session.add(newAlert)
         session.commit()
         flash("A new service alert has been created. It will appear here on approval by the appropriate admin.")
@@ -100,21 +125,14 @@ def createAlert(user_id):
         "example@localhost")
         '''
 
-        return redirect(url_for('showAllAlerts'))
+        return redirect(url_for('showAllAlertsAdmin'))
     else:
-        return render_template('createAlert.html', user_id=user_id)
+        return render_template('createAlert.html')
 
-@app.route('/PatchAlert/new/<int:alert_id>/approval/login', methods=['GET','POST'])
-@app.route('/new/<int:alert_id>/approval/login', methods=['GET','POST'])
-def loginToApproveAlert(alert_id):
-    if request.method == 'POST':
-        return redirect(url_for('approveAlert', user_id=1, alert_id=alert_id))
-    else:
-        return render_template('approve_login.html', alert_id=alert_id)
-
-@app.route('/PatchAlert/new/<int:alert_id>/<int:user_id>/approval', methods=['GET','POST'])
-@app.route('/new/<int:alert_id>/<int:user_id>/approval', methods=['GET','POST'])
-def approveAlert(alert_id, user_id):
+# approve alert
+@app.route('/PatchAlert/new/<int:alert_id>/approval', methods=['GET','POST'])
+@app.route('/new/<int:alert_id>/approval', methods=['GET','POST'])
+def approveAlert(alert_id):
     alert = session.query(Alert).filter_by(id = alert_id).one()
     if request.method == 'POST':
         alert.isApproved = 1
@@ -129,26 +147,38 @@ def approveAlert(alert_id, user_id):
         "example@localhost",
         "exampleTeam@localhost")
         '''
-        return redirect(url_for('showAllAlerts'))
+        return redirect(url_for('showAllAlertsAdmin'))
     else:
         return render_template('approve.html', alert=alert,
                                                alert_id=alert_id,
-                                               user_id=user_id,
                                                json=json)
+# delete alert
+@app.route('/PatchAlert/admin/<int:alert_id>/delete')
+def deleteAlert(alert_id):
+    alert = session.query(Alert).filter_by(id = alert_id).one()
+    session.delete(alert)
+    session.commit()
+    return redirect(url_for('showAllAlertsAdmin'))
 
+# get alert stats
 @app.route('/PatchAlert/<int:alert_id>/stats')
 def getStats(alert_id):
     requests = session.query(Request).filter_by(alert_id = alert_id).all()
     requestServers = []
     for r in requests:
-        requestServers.append(r.server)
+        servers = r.server.split(',')
+        for s in servers:
+            requestServers.append(s)
     requestServers = getCounts(requestServers)
-    #serverCounts = []
-    #for k, v in requestServers.items():
-    #    serverCounts.append({'name' : k, 'count' : v})
-    #serverCounts = json.dumps(serverCounts)
     return render_template('stats.html', alert_id=alert_id,
-                                         servers=requestServers)
+                                         servers=requestServers,
+                                         requests=requests)
+
+### AUXILIARY FUNCTIONS
+
+''' counts the number of things in the
+    list of things supplied (must be a list)
+'''
 def getCounts(listOfThings):
     countsDictionary = {};
     for i in listOfThings:
@@ -159,6 +189,10 @@ def getCounts(listOfThings):
         countsDictionary.update({i : count})
     return countsDictionary
 
+''' send an email with the suppled message from the
+    supplied senderName at the "sender" address
+    to the supplied recipient address
+'''
 def sendMail(message, senderName, sender, recipient):
     '''
     msg = Message(message,
@@ -168,13 +202,13 @@ def sendMail(message, senderName, sender, recipient):
     '''
     return senderName + "@ " + sender + " says: \n" + message + "\n to: " + recipient
 
-
-
+# TODO:
 # need additional timer function that checks if alerts are expired
 # may need to reconfigure db to inlcude an expiration date/time
 # when an alert expires, send email to admin-creator(s) with stats,
 # or link to stats
 
+# launches the app:
 if __name__ == '__main__':
     app.debug = True # restart server on changes
     app.run(host = '0.0.0.0', port = 5000)

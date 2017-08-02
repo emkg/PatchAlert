@@ -4,34 +4,75 @@
   </head>
   <body>
     <div class="page-container" >
-      <form method='POST' action='{{url_for('requestException', alert_id=alert_id)}}'>
+      <form method='POST' id='request' action='{{url_for('requestException', alert_id=alert_id)}}'>
         <h2>Request an Exception to the Patch.</h2>
-        <br/><br/>
 
-        Please let us know who you are: <br/>
-        <input type='text' name='user' /><br/>
+        <br/>
+        <br/>
 
-        What server do you need withheld from the scheduled update? <br/><br/>
+        Please let us know who you are:
+        <br/>
 
-        <select id='server' name='server'>
-        {% set servers = json.loads(alert.servers) %}
-          {% for s in servers %}
-            <option value="{{s}}">{{s}}</option>
-          {% endfor %}
-        </select> 
+        <input type='text' name='user' />
+        <br/>
+
+        What server do you need withheld from the scheduled update?
+        <br/>
+
+        <br/>
+
+        <input id='serverselect' type='text' autocomplete='on' list='serverlist' />
+            <button onclick='addListItem()' type='button' class='button' style='display: block;'>
+              <span class='button-text'>Add</span>
+            </button>
+          <datalist id='serverlist'>
+            {% set servers = json.loads(alert.servers) %}
+            {% for s in servers %}
+              <option value="{{s}}">{{s}}</option>
+            {% endfor %}
+          </datalist>
+
+        <!-- This will be hidden? -->
+        <input id='server' name='server'>
+
         <br/>
 
         Please prodive a reason why you need this exception: <br/>
-        <textarea type='text' name='reason' rows='4'></textarea><br/><br/>
+        <textarea type='text' name='reason' rows='4'></textarea>
+
+        <br/>
+        <br/>
 
         What would be an acceptible date and time to reschedule this update? <br/>
-        <input type='date' name='altDate' placeholder="alt date"/><br/>
-        <input type='time' name='altTime' placeholder="alt time"/><br/>
+        <input type='date' name='altDate' placeholder="alt date"/>
+
+        <br/>
+
+        <input type='time' name='altTime' placeholder="alt time"/>
+
+        <br/>
 
         <div class='item'>
           <input style='color: white;' class='button' type='submit' value="submit"/>
         </div>
       </form>
     </div>
+
+    <script>
+      var servers = [];
+      function addListItem() {
+        var selected = document.getElementById('serverselect').value;
+        selected = selected.split(',')
+        for(var i = 0; i < selected.length; i++) {
+          if(servers.includes(selected[i])) {
+            continue;
+          } else {
+            servers.push(selected[i])
+          }
+        }
+        document.getElementById('server').value = servers
+      }
+    </script>
+
   </body>
 </html>

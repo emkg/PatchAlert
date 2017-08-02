@@ -45,7 +45,7 @@ class Alert(Base):
 class Request(Base):
     __tablename__ = 'request'
 
-    server = Column(String(80), nullable = False)
+    server = Column(String(2000), nullable = False)
     id = Column(Integer, primary_key = True)
     reason = Column(String(250), nullable = False)
     altDate = Column(String(10), nullable=False)

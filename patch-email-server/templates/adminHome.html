@@ -41,15 +41,27 @@
               from <span class='data'>{{alert.startTime}}</span>
               to <span class='data'>{{alert.endTime}}</span>
             </div>
-
-
             <div class='buttons' >
+            {% if alert.isApproved == 0 %}
               <div class='button'>
-                <a href='{{url_for('requestException', alert_id=alert.id)}}' >
-                  <span span class='button-text'>REQUEST EXCEPTION</span>
+                <a href='{{url_for('approveAlert', alert_id=alert.id)}}' >
+                  <span span class='button-text'>APPROVE ALERT</span>
+                </a>
+              </div>
+              {% endif %}
+              <br/>
+              <br/>
+              <div class='button'>
+                <a href='{{url_for('deleteAlert', alert_id=alert.id)}}' >
+                  <span span class='button-text'>DELETE ALERT</span>
                 </a>
               </div>
               <br/>
+              <br/>
+                <a class='img-link' href='{{url_for('getStats', alert_id=alert.id)}}'>
+                  <img src='/static/img/ic_poll_black_24px.svg' />
+                  <span><br/>GET STATS<span>
+                </a>
               <br/>
             </div>
         </div>
@@ -61,6 +73,12 @@
         </div>
       </div>
     {% endif %}
+
+
+    <a class='img-link' href='{{url_for('createAlert')}}'>
+      <img src='/static/img/ic_add_alert_black_48px.svg' alt="New Alert"/>
+      <span><br/>New Alert</span>
+    </a>
 
   </body>
 </html>

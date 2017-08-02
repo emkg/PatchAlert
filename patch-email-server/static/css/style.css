@@ -1,5 +1,9 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto');
+/* Some style implementation below based upon
+    Materialize CSS (materializecss.com)            */
+/* All style inspired by Google's Material UI       */
+/* AUTHOR: Emily Grimes                             */
 
+@import url('https://fonts.googleapis.com/css?family=Roboto');
 
 body {
   text-align: center;
@@ -73,6 +77,16 @@ a .button-text {
   font-weight: 500;
   user-select: none;
   color: rgb(255, 255, 255);
+}
+
+.button {
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+
+.button:hover {
+    background-color: #4CAF50; /* Green */
+    color: white;
 }
 
 h1 {
@@ -198,4 +212,13 @@ input {
   position: absolute;
   top: 16px;
   left: 16px;
+}
+
+.chart {
+  display: block;
+  margin: 0 auto;
+}
+
+#calcart > svg {
+  width: 75%;
 }
