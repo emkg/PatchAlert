@@ -85,8 +85,8 @@ a .button-text {
 }
 
 .button:hover {
-    background-color: #4CAF50; /* Green */
     color: white;
+    background-color: red;
 }
 
 h1 {
@@ -137,6 +137,21 @@ a.img-link span {
 
 a.img-link:hover span {
   opacity: 1;
+}
+
+a.img-link-display-on-hover img,
+a.img-link-display-on-hover span {
+  display: none;
+}
+
+a.img-link-display-on-hover:hover img,
+a.img-link-display-on-hover:hover span {
+  display: block;
+  margin: 0 auto;
+}
+
+a.img-link-display-on-hover:hover h1 {
+  display: none;
 }
 
 input#password {
@@ -217,4 +232,27 @@ input {
 .chart {
   display: block;
   margin: 0 auto;
+}
+
+button#add {
+  background-image: url('../img/ic_add_black_36px.svg');
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  /* put the height and width of your image here */
+  height: 36px;
+  width: 36px;
+  background-color: white;
+  border: none;
+  position: absolute;
+  transform-style: preserve-3d;
+  transition: all 0.5s ease-in;
+}
+
+button:hover {
+  transform: rotateZ(90deg);
+  cursor: pointer;
+}
+
+button:focus {
+  outline: none;
 }

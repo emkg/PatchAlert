@@ -21,10 +21,8 @@
 
         <br/>
 
-        <input id='serverselect' type='text' autocomplete='on' list='serverlist' />
-            <button onclick='addListItem()' type='button' class='button' style='display: block;'>
-              <span class='button-text'>Add</span>
-            </button>
+        <input id='serverselect' type='text' autocomplete='on' list='serverlist' style='width:95%;' />
+            <button id='add' onclick='addListItem()' type='button'><a href=''></a></button>
           <datalist id='serverlist'>
             {% set servers = json.loads(alert.servers) %}
             {% for s in servers %}
@@ -33,11 +31,11 @@
           </datalist>
 
         <!-- This will be hidden? -->
-        <input id='server' name='server'>
+        <input disabled='true' id='server' name='server'>
 
         <br/>
 
-        Please prodive a reason why you need this exception: <br/>
+        Please provide a reason why you need this exception: <br/>
         <textarea type='text' name='reason' rows='4'></textarea>
 
         <br/>

@@ -18,7 +18,11 @@
       {% endif %}
     {% endwith %}
 
-    <h1>Service Alerts</h1>
+    <a class='img-link-display-on-hover' href='{{url_for('getAllStats')}}'>
+      <img src='/static/img/ic_poll_black_48px.svg' alt="All Time Stats"/>
+      <span>Get All Time Stats</span>
+      <h1>Service Alerts</h1>
+    </a>
     {% if alerts %}
       {% for alert in alerts %}
         <div class='page-container'>
@@ -74,9 +78,8 @@
       </div>
     {% endif %}
 
-
     <a class='img-link' href='{{url_for('createAlert')}}'>
-      <img src='/static/img/ic_add_alert_black_48px.svg' alt="New Alert"/>
+      <img id='new-alert' src='/static/img/ic_add_alert_black_48px.svg' alt="New Alert"/>
       <span><br/>New Alert</span>
     </a>
 

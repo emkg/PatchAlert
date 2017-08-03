@@ -179,6 +179,25 @@ def getStats(alert_id):
                                          servers=requestServers,
                                          requests=requests)
 
+# get historic stats
+@app.route('/PatchAlert/stats')
+def getAllStats():
+    alerts = session.query(Alert).all()
+    requests = session.query(Request).all()
+    users = []
+    requestServers = []
+    for r in requests:
+        users.append(r.user)
+        servers = r.server.split(',')
+        for s in servers:
+            requestServers.append(s)
+    requestServers = getCounts(requestServers)
+    users = getCounts(users)
+    return render_template('allStats.html', alerts=alerts,
+                                            requests=requests,
+                                            users=users,
+                                            requestServers=requestServers)
+
 ### AUXILIARY FUNCTIONS
 
 ''' counts the number of things in the
@@ -218,7 +237,6 @@ def updateExpiredStatusOfAlerts():
             a.isExpired = 1
             session.add(a)
             session.commit()
-            flash("%s" %(now-date))
             #sendMail()
                 # TODO:
                 # when an alert expires, send email to admin-creator(s) with stats,
