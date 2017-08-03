@@ -1,6 +1,7 @@
 from flask import Flask, flash, render_template, url_for, request, redirect, jsonify
 from flask_mail import Mail, Message
 from sqlalchemy import distinct, func
+from datetime import datetime, timedelta
 import json
 
 user = False;
@@ -58,7 +59,8 @@ def getAllAlertsJSON():
 @app.route('/home')
 @app.route('/PatchAlert')
 def showAllAlerts():
-    alerts = session.query(Alert).filter_by(isApproved = 1).all()
+    updateExpiredStatusOfAlerts()
+    alerts = session.query(Alert).filter_by(isApproved = 1, isExpired = 0).all()
     return render_template('home.html', alerts = alerts, json=json)
 
 @app.route('/request/<int:alert_id>/', methods=['GET','POST'])
@@ -112,7 +114,8 @@ def createAlert():
             date=request.form['Date'],
             startTime=request.form['startTime'],
             endTime=request.form['endTime'],
-            isApproved = 0)
+            isApproved = 0,
+            isExpired = 0)
         session.add(newAlert)
         session.commit()
         flash("A new service alert has been created. It will appear here on approval by the appropriate admin.")
@@ -163,6 +166,7 @@ def deleteAlert(alert_id):
 # get alert stats
 @app.route('/PatchAlert/<int:alert_id>/stats')
 def getStats(alert_id):
+    alertDate = session.query(Alert).filter_by(id = alert_id).one().date
     requests = session.query(Request).filter_by(alert_id = alert_id).all()
     requestServers = []
     for r in requests:
@@ -171,6 +175,7 @@ def getStats(alert_id):
             requestServers.append(s)
     requestServers = getCounts(requestServers)
     return render_template('stats.html', alert_id=alert_id,
+                                         alertDate=alertDate,
                                          servers=requestServers,
                                          requests=requests)
 
@@ -202,11 +207,27 @@ def sendMail(message, senderName, sender, recipient):
     '''
     return senderName + "@ " + sender + " says: \n" + message + "\n to: " + recipient
 
-# TODO:
-# need additional timer function that checks if alerts are expired
-# may need to reconfigure db to inlcude an expiration date/time
-# when an alert expires, send email to admin-creator(s) with stats,
-# or link to stats
+def updateExpiredStatusOfAlerts():
+    alerts = session.query(Alert).all()
+    now = datetime.now().strftime('%Y-%m-%d %H:%M')
+    now = datetime.strptime(now, '%Y-%m-%d %H:%M')
+    for a in alerts:
+        date = "%s %s" % (a.date, a.startTime)
+        date = datetime.strptime(date, '%Y-%m-%d %H:%M')
+        if (now - date) >= timedelta(hours=-12):
+            a.isExpired = 1
+            session.add(a)
+            session.commit()
+            flash("%s" %(now-date))
+            #sendMail()
+                # TODO:
+                # when an alert expires, send email to admin-creator(s) with stats,
+                # or link to stats
+        else:
+            a.isExpired = 0
+            session.add(a)
+            session.commit()
+    return
 
 # launches the app:
 if __name__ == '__main__':
