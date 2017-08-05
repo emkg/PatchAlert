@@ -10,13 +10,19 @@ app = Flask(__name__)
 app.secret_key = 'secret'
 mail = Mail()
 
-app.config.update(dict(
-    DEBUG = True,
-    MAIL_SERVER = 'smtp.gmail.com',
-    MAIL_PORT = 465,
-    MAIL_USE_TLS = False,
-    MAIL_USE_SSL = True,
-))
+'''
+app.config['MAIL_SERVER'] = default 'localhost'
+app.config['MAIL_PORT'] = default 25
+app.config['MAIL_USE_TLS'] = default False
+app.config['MAIL_USE_SSL'] = default False
+app.config['MAIL_DEBUG'] = default app.debug
+app.config['MAIL_USERNAME'] = default None
+app.config['MAIL_PASSWORD'] = default None
+app.config['MAIL_DEFAULT_SENDER'] = default None
+app.config['MAIL_MAX_EMAILS'] = default None
+app.config['MAIL_SUPPRESS_SEND'] = default app.testing
+app.config['MAIL_ASCII_ATTACHMENTS'] = default False
+'''
 
 mail.init_app(app)
 
@@ -66,6 +72,7 @@ def showAllAlerts():
 @app.route('/request/<int:alert_id>/', methods=['GET','POST'])
 def requestException(alert_id):
     alert = session.query(Alert).filter_by(id = alert_id).one()
+    now = datetime.now().strftime('%Y-%m-%d')
     if request.method == 'POST':
         servers = request.form['server'].replace(', ', ',')
         #servers = servers.split(r'[;,\s,+\s]')
@@ -74,6 +81,7 @@ def requestException(alert_id):
             reason=request.form['reason'],
             altDate=request.form['altDate'],
             altTime=request.form['altTime'],
+            dateCreated=now,
             user=request.form['user'],
             alert = alert)
         session.add(newRequest)
@@ -107,13 +115,15 @@ def showAllAlertsAdmin():
 # create alert
 @app.route('/new', methods=['GET','POST'])
 def createAlert():
+    now = datetime.now().strftime('%Y-%m-%d')
     if request.method == 'POST':
         serverData = request.form['Servers'].split(' ')
         newAlert = Alert(
-            servers=json.dumps(serverData),
+            servers=strServers,
             date=request.form['Date'],
             startTime=request.form['startTime'],
             endTime=request.form['endTime'],
+            dateCreated=now,
             isApproved = 0,
             isExpired = 0)
         session.add(newAlert)
@@ -142,14 +152,15 @@ def approveAlert(alert_id):
         session.add(alert)
         session.commit()
         flash("The alert has been approved!")
-        '''
         # add more information to the message
+        '''
         sendMail("Hello,<br/>A new service alert has been created. Please login to see details."
         + "<br/><br/>Thank you!",
         "Webmaster",
-        "example@localhost",
-        "exampleTeam@localhost")
+        "localhost",
+        "example@localhost")
         '''
+
         return redirect(url_for('showAllAlertsAdmin'))
     else:
         return render_template('approve.html', alert=alert,
@@ -184,6 +195,31 @@ def getStats(alert_id):
 def getAllStats():
     alerts = session.query(Alert).all()
     requests = session.query(Request).all()
+    allServers = []
+    timeDictionary = {}
+    for a in alerts:
+        # deal with timing
+        deltaTimeSum = 0
+        requestsPerAlert = session.query(Request).filter_by(alert_id = a.id).all()
+        for req in requestsPerAlert:
+            # a.dateCreated - req.dateCreated,
+            # converted to datetime, get .toSeconds() (or to day for now)
+            # to store as float
+            timeDiff = datetime.strptime(a.dateCreated, '%Y-%m-%d') - datetime.strptime(req.dateCreated, '%Y-%m-%d')
+            timeDiff = timeDiff.days
+            deltaTimeSum = deltaTimeSum + timeDiff
+            # save the dictionary so that each alert id is stored
+            # as a key to a dictionary of number of requests for that
+            # alert, and the total seconds sum of time between alert creation
+            # and request
+        timeDictionary.update({a.id : { len(requestsPerAlert) : deltaTimeSum }})
+
+        # get the servers
+        serversAffected = a.servers.split(',')
+        for sa in serversAffected:
+            allServers.append(sa)
+
+    allServers = getCounts(allServers)
     users = []
     requestServers = []
     for r in requests:
@@ -193,10 +229,10 @@ def getAllStats():
             requestServers.append(s)
     requestServers = getCounts(requestServers)
     users = getCounts(users)
-    return render_template('allStats.html', alerts=alerts,
-                                            requests=requests,
-                                            users=users,
-                                            requestServers=requestServers)
+    return render_template('allStats.html', servers=allServers,
+                                            timeDictionary=timeDictionary,
+                                            requests=requestServers,
+                                            users=users)
 
 ### AUXILIARY FUNCTIONS
 
@@ -218,12 +254,10 @@ def getCounts(listOfThings):
     to the supplied recipient address
 '''
 def sendMail(message, senderName, sender, recipient):
-    '''
     msg = Message(message,
                   sender=(senderName, sender),
                   recipients=[recipient])
     mail.send(msg)
-    '''
     return senderName + "@ " + sender + " says: \n" + message + "\n to: " + recipient
 
 def updateExpiredStatusOfAlerts():

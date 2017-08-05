@@ -31,7 +31,7 @@
           </datalist>
 
         <!-- This will be hidden? -->
-        <input disabled='true' id='server' name='server'>
+        <input id='server' name='server' readonly>
 
         <br/>
 
@@ -60,6 +60,7 @@
       var servers = [];
       function addListItem() {
         var selected = document.getElementById('serverselect').value;
+        
         selected = selected.split(',')
         for(var i = 0; i < selected.length; i++) {
           if(servers.includes(selected[i])) {

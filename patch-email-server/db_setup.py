@@ -20,6 +20,7 @@ class Alert(Base):
     date = Column(String(10), nullable=False)
     startTime = Column(String(8), nullable=False)
     endTime = Column(String(8), nullable=False)
+    dateCreated = Column(String(10), nullable=False)
     createdBy = relationship(User)
     approvedBy = relationship(User)
     isApproved = Column(Integer) # 0 or 1
@@ -35,6 +36,7 @@ class Alert(Base):
             'date': self.date,
             'startTime': self.startTime,
             'endTime': self.endTime,
+            'dateCreated': self.dateCreated,
             'createdBy': self.createdBy,
             'approvedBy': self.approvedBy,
             'isApproved': self.isApproved,
@@ -51,6 +53,7 @@ class Request(Base):
     altDate = Column(String(10), nullable=False)
     altTime = Column(String(8), nullable=False)
     user = Column(String(80), nullable=False)
+    dateCreated = Column(String(10), nullable=False)
     alert = relationship(Alert)
     alert_id = Column(Integer, ForeignKey('alert.id'))
 
@@ -62,6 +65,7 @@ class Request(Base):
             'reason': self.reason,
             'altDate': self.altDate,
             'altTime': self.altTime,
+            'dateCreated' : self.dateCreated,
             'user': self.user,
             'alert_id': self.alert_id,
             'id': self.id,
