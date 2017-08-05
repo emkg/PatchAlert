@@ -8,9 +8,11 @@
           <h2>Create a new alert of service.</h2>
           <br/><br/>
           What servers will be affected?<br/>
-          <input type='text' name='servers' placeholder="Servers" maxlength='2000'/>
+          <input type='text' name='servers' id='servers' placeholder="Servers" maxlength='2000' style='width:95%;'/>
+            <button id='add' onclick='addServers()' type='button'><a href=''></a></button>
+          <br/>
           When will the service take place? <br/>
-          <input type='date' name='date' placeholder="Date"/>
+          <input type='date' name='date' placeholder="date"/>
           From what time:<br/>
           <input type='time' name='startTime' placeholder="Start Time"/>
           To what time: <br/>
@@ -19,10 +21,13 @@
       </form>
     </div>
     <script>
-      var servers = document.getElementById('servers').value;
-      regex = /((,\s)|(\s\s)|(;\s)|(\t\s)|[,\s;\t\n])/;
-      servers = servers.split(regex);
-      document.getElementById('server').value = servers
+      function addServers() {
+        var servers = document.getElementById('servers').value;
+        regex = /((,\s)|(\s\s)|(;\s)|(\t\s)|[,\s;\t\n])/g;
+        servers = servers.replace(regex, ",")
+        servers = servers.split(",");
+        document.getElementById('servers').value = servers
+      }
     </script>
   </body>
 </html>

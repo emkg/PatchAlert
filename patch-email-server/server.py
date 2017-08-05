@@ -75,7 +75,6 @@ def requestException(alert_id):
     now = datetime.now().strftime('%Y-%m-%d')
     if request.method == 'POST':
         servers = request.form['server'].replace(', ', ',')
-        #servers = servers.split(r'[;,\s,+\s]')
         newRequest = Request(
             server=servers,
             reason=request.form['reason'],
@@ -117,10 +116,9 @@ def showAllAlertsAdmin():
 def createAlert():
     now = datetime.now().strftime('%Y-%m-%d')
     if request.method == 'POST':
-        serverData = request.form['Servers'].split(' ')
         newAlert = Alert(
-            servers=strServers,
-            date=request.form['Date'],
+            servers=request.form['servers'],
+            date=request.form['date'],
             startTime=request.form['startTime'],
             endTime=request.form['endTime'],
             dateCreated=now,

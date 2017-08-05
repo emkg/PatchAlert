@@ -8,7 +8,7 @@
       <div class='item'>
         Patch for
         <div class='scrolly-list'>
-          {% set servers = json.loads(alert.servers) %}
+        {% set servers = alert.servers.split(",") %}
 
           {% for s in servers %}
           <div class='scrolly-list-item'>
