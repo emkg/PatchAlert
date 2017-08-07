@@ -24,7 +24,7 @@
         <input id='serverselect' type='text' autocomplete='on' list='serverlist' style='width:95%;' />
             <button id='add' onclick='addListItem()' type='button'><a href=''></a></button>
           <datalist id='serverlist'>
-            {% set servers = json.loads(alert.servers) %}
+            {% set servers = alert.servers.split(",") %}
             {% for s in servers %}
               <option value="{{s}}">{{s}}</option>
             {% endfor %}
@@ -60,7 +60,7 @@
       var servers = [];
       function addListItem() {
         var selected = document.getElementById('serverselect').value;
-        
+
         selected = selected.split(',')
         for(var i = 0; i < selected.length; i++) {
           if(servers.includes(selected[i])) {

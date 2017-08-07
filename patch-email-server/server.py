@@ -2,7 +2,7 @@ from flask import Flask, flash, render_template, url_for, request, redirect, jso
 from flask_mail import Mail, Message
 from sqlalchemy import distinct, func
 from datetime import datetime, timedelta
-import json
+import numpy as np
 
 user = False;
 
@@ -67,7 +67,7 @@ def getAllAlertsJSON():
 def showAllAlerts():
     updateExpiredStatusOfAlerts()
     alerts = session.query(Alert).filter_by(isApproved = 1, isExpired = 0).all()
-    return render_template('home.html', alerts = alerts, json=json)
+    return render_template('home.html', alerts = alerts)
 
 @app.route('/request/<int:alert_id>/', methods=['GET','POST'])
 def requestException(alert_id):
@@ -88,7 +88,7 @@ def requestException(alert_id):
         flash("Your request has been submitted. Thank you!")
         return redirect(url_for('showAllAlerts'))
     else:
-        return render_template('request.html', alert_id=alert_id, alert=alert, json=json)
+        return render_template('request.html', alert_id=alert_id, alert=alert)
 
 ### ADMIN FUNCTIONS
 
@@ -109,7 +109,7 @@ def showAllAlertsAdmin():
         return redirect(url_for('adminLogin'))
     else:
         alerts = session.query(Alert).all()
-        return render_template('adminHome.html', alerts = alerts, json=json)
+        return render_template('adminHome.html', alerts = alerts)
 
 # create alert
 @app.route('/new', methods=['GET','POST'])
@@ -162,8 +162,7 @@ def approveAlert(alert_id):
         return redirect(url_for('showAllAlertsAdmin'))
     else:
         return render_template('approve.html', alert=alert,
-                                               alert_id=alert_id,
-                                               json=json)
+                                               alert_id=alert_id)
 # delete alert
 @app.route('/PatchAlert/admin/<int:alert_id>/delete')
 def deleteAlert(alert_id):
@@ -210,7 +209,7 @@ def getAllStats():
             # as a key to a dictionary of number of requests for that
             # alert, and the total seconds sum of time between alert creation
             # and request
-        timeDictionary.update({a.id : { len(requestsPerAlert) : deltaTimeSum }})
+        timeDictionary.update({ a.id : { len(requestsPerAlert) : deltaTimeSum }})
 
         # get the servers
         serversAffected = a.servers.split(',')
