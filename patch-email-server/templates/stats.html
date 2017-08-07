@@ -50,25 +50,28 @@
           ]);
 
           // Set chart options
-          var options = {
+          var options1 = {
             'title':'Requested Servers',
             'width':400,
             'height':400,
             'legend': { position: 'none' }
           };
 
-          var calOptions = {
+          var options2 = {
             'title' : 'Requested Alternative Update Times',
+            'width':400,
+            'height':400,
+            'legend': { position: 'none' }
           };
 
 
           // Instantiate and draw our chart, passing in some options.
           var piechart = new google.visualization.PieChart(document.getElementById('piechart'));
-          piechart.draw(data, options);
+          piechart.draw(data, options1);
           var barchart = new google.visualization.BarChart(document.getElementById('barchart'));
-          barchart.draw(data2, options);
+          barchart.draw(data2, options1);
           var calchart = new google.visualization.Timeline(document.getElementById('calchart'));
-          calchart.draw(calData, calOptions);
+          calchart.draw(calData, options2);
         }
     </script>
   </body>

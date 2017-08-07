@@ -198,18 +198,23 @@ def getAllStats():
         # deal with timing
         deltaTimeSum = 0
         requestsPerAlert = session.query(Request).filter_by(alert_id = a.id).all()
+        timeDictionary.update({ a.id : { } })
         for req in requestsPerAlert:
             # a.dateCreated - req.dateCreated,
             # converted to datetime, get .toSeconds() (or to day for now)
             # to store as float
             timeDiff = datetime.strptime(a.dateCreated, '%Y-%m-%d') - datetime.strptime(req.dateCreated, '%Y-%m-%d')
-            timeDiff = timeDiff.days
-            deltaTimeSum = deltaTimeSum + timeDiff
+            timeDiff = (timeDiff.seconds/60)%60 # get the hours
+            timeDictionary.get(a.id).update({ req.id : timeDiff })
+            # try to save the dictionary as a series
+
+
+            ##deltaTimeSum = deltaTimeSum + timeDiff
             # save the dictionary so that each alert id is stored
             # as a key to a dictionary of number of requests for that
             # alert, and the total seconds sum of time between alert creation
             # and request
-        timeDictionary.update({ a.id : { len(requestsPerAlert) : deltaTimeSum }})
+        ##timeDictionary.update({ a.id : { len(requestsPerAlert) : deltaTimeSum }})
 
         # get the servers
         serversAffected = a.servers.split(',')

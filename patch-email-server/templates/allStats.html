@@ -8,6 +8,7 @@
         Summary of Exceptions Requested
         <div id='barchart' class='chart'></div>
         <div id='piechart' class='chart'></div>
+        <div id='linechart' class='chart'></div>
     </div>
 
     <script type="text/javascript">
@@ -36,18 +37,35 @@
             {%endfor%}
           ]);
 
-          var timedata = new google.visualization.arrayToDataTable([
-            ['Alert ID', 'Average Time Between Alert and Request Creation'],
-            {% for k, v in timeDictionary.items() %}
-              {% for t,s in v.items() %}
-                ['{{k}}', {% s / t %}]
-              {%endfor%}
-            {% endfor %}
-          ]);
+          var timedata = new google.visualization.DataTable();
+             timedata.addColumn('number', 'x');
+             timedata.addColumn('number', 'values');
+             timedata.addColumn({id:'i0', type:'number', role:'interval'});
+             //timedata.addColumn({id:'i1', type:'number', role:'interval'});
+
+             timedata.addRows([
+               {% for k,v in timeDictionary.items() %}
+                  {% for s,t in v.items() %}
+                      [{{k}}, {{s}}, {{t}}],
+                  {% endfor %}
+               {% endfor %}
+             ]);
+
+             /*timedata.addRows([
+               [1, 100, 90, 110],
+               [2, 120, 95, 130],
+               [3, 130, 105, 140],
+               [4, 90, 85, 95],
+               [5, 70, 74, 63],
+               [6, 30, 39, 22],
+               [7, 80, 77, 83],
+               [8, 100, 90, 110]
+             ]);*/
+
 
           // Set chart options
           var options1 = {
-            'title':'Which servers have been updated',
+            'title':'Which servers have been updated?',
             'width':400,
             'height':400,
             'legend': { position: 'left' }
@@ -60,6 +78,24 @@
             'legend': { position: 'none' }
           };
 
+          var options3 = {
+            'title':'How long do people wait to request exceptions?',
+            'width':400,
+            'height':400,
+            'legend': { position: 'none' },
+            'curveType': 'function',
+            'lineWidth': 4,
+            'intervals': { 'style':'line' },
+          };
+
+          var options4 = {
+            'title':'Are certain servers being requested more often?',
+            'width':400,
+            'height':400,
+            'legend': { position: 'none' },
+            'histogram': { lastBucketPercentile: 4 },
+            'vAxis': { scaleType: 'mirrorLog' }
+          };
 
 
           // Instantiate and draw our chart, passing in some options.
@@ -67,6 +103,8 @@
           barchart.draw(serverdata, options1);
           var piechart = new google.visualization.PieChart(document.getElementById('piechart'));
           piechart.draw(userdata, options2);
+          var linechart = new google.visualization.LineChart(document.getElementById('linechart'));
+          linechart.draw(timedata, options3);
         }
     </script>
   </body>
